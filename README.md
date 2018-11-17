@@ -9,9 +9,10 @@ Login to your Walmart.com/Grocery account, then waits for you to text !add or !s
 - Twilio
 - puppeteer
 
-![Image of Cart](https://github.com/RichardMcSorley/walmart-grocery-bot/blob/master/screenshots/app.jpg)
-
-![Image of text message](https://github.com/RichardMcSorley/walmart-grocery-bot/blob/master/screenshots/text.jpg)
+<p float="left">
+  <img src="../blob/master/screenshots/app.jpg" width="100" />
+  <img src="../blob/master/screenshots/text.jpg" width="100" />
+</p>
 
 ### Install
 
