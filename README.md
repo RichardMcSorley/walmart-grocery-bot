@@ -1,6 +1,12 @@
 # Walmart Grocery Cart Bot
 
-Login to your Walmart.com/Grocery account, then waits for you to text !add or !search followed by product name. It will select the first item in the results and text you back with details.
+Bot will open a headless chrome browser and navigate walmart.com/grocery. It will login for you and add things to your cart by sending a message like `!add milk`. No more trying to remember everything, just add things to your cart as soon as you run out.
+
+#### Available commands:
+
+- `!add` - Adds product first product in search to your cart.
+- `!search` - Returns first item's info from search.
+- `!cart` - returns a screenshot of your current cart.
 
 ### Technologies used:
 
