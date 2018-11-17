@@ -4,7 +4,7 @@ const { getPrefix, allCommands } = require("../commands");
 const { logger } = require("../utils");
 const buildTwiml = (twiml, result) => {
   const message = twiml.message();
-  message.body(decodeURIComponent(result.text));
+  message.body(result.text.replace(/&amp;/g, "&"));
   message.media(result.image);
 };
 module.exports = (server, options) => {
