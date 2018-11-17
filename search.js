@@ -1,6 +1,11 @@
 const { logger, screen } = require("./utils");
 const moment = require("moment");
-const searchProduct = async (page, query, shouldClick = false) => {
+const searchProduct = async (
+  page,
+  query,
+  shouldClick = false,
+  shouldShowImage = true
+) => {
   await page.goto("https://grocery.walmart.com/search/?query=" + query);
   logger("navigating to search page");
   await page.waitForSelector(`[id^="item-"]`);
@@ -16,10 +21,14 @@ const searchProduct = async (page, query, shouldClick = false) => {
     return element.innerHTML;
   });
   logger("found title");
-  const image = await first.$eval('[data-automation-id="image"]', element => {
-    return element.src;
-  });
-  logger("found image");
+  let image = null;
+  if (shouldShowImage) {
+    image = await first.$eval('[data-automation-id="image"]', element => {
+      return element.src;
+    });
+    logger("found image");
+  }
+
   const wholeUnits = await first.$eval(
     '[data-automation-id="wholeUnits"]',
     element => {

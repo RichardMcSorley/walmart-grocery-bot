@@ -1,36 +1,8 @@
 let browserProcess = null;
 const { logger, screen } = require("./utils");
 const moment = require("moment");
-const prefixes = {
-  "!search": {
-    match: "search", // used to match type, useful if we have multiple for same function
-    value: "!search ", // what the user typed
-    lang: "en" // maybe use to respond in another language
-  },
-  "!add": {
-    match: "add", // used to match type, useful if we have multiple for same function
-    value: "!add ", // what the user typed
-    lang: "en" // maybe use to respond in another language
-  },
-  "!cart": {
-    match: "cart", // used to match type, useful if we have multiple for same function
-    value: "!cart ", // what the user typed
-    lang: "en" // maybe use to respond in another language
-  }
-};
 
-const allCommands = () => Object.keys(prefixes).join(", ");
-
-const getPrefix = text => {
-  const firstword = text.split(" ")[0]; //
-  if (firstword in prefixes) {
-    return prefixes[firstword];
-  } else {
-    return null;
-  }
-};
-
-const addToCart = async query => {
+const addToCart = async (query, shouldShowImage) => {
   logger("entered addToCart");
   const { searchProduct } = require("./search");
   const page = await browserProcess.newPage();
@@ -41,7 +13,8 @@ const addToCart = async query => {
   const { title, wholeUnits, partialUnits, image } = await searchProduct(
     page,
     query,
-    true
+    true,
+    shouldShowImage
   );
   logger("Logged in");
   page.close();
@@ -67,7 +40,7 @@ const searchProduct = async query => {
   page.close();
   logger("closed page");
   return {
-    text: `I found ${title}. $${wholeUnits}.${partialUnits}\nText !add ${query} to add to your cart.`,
+    text: `I found ${title}. $${wholeUnits}.${partialUnits}\nText !add to add to your cart.`,
     image
   };
 };
@@ -113,6 +86,65 @@ const { login } = require("./login");
   logger("logged in");
   await page.close();
 })();
+
+const prefixes = {
+  "!search": {
+    match: "search", // used to match type, useful if we have multiple for same function
+    value: "!search ", // what the user typed
+    lang: "en",
+    display: false,
+    handle: searchProduct
+  },
+  "!add": {
+    match: "add", // used to match type, useful if we have multiple for same function
+    value: "!add ", // what the user typed
+    lang: "en",
+    display: false,
+    handle: addToCart
+  },
+  "!cart": {
+    match: "cart", // used to match type, useful if we have multiple for same function
+    value: "!cart ", // what the user typed
+    lang: "en",
+    display: false,
+    handle: getCart
+  },
+  search: {
+    match: "search", // used to match type, useful if we have multiple for same function
+    value: "search ", // what the user typed
+    lang: "en",
+    display: true,
+    handle: searchProduct
+  },
+  add: {
+    match: "add", // used to match type, useful if we have multiple for same function
+    value: "add ", // what the user typed
+    lang: "en", // maybe use to respond in another language
+    display: true,
+    handle: addToCart
+  },
+  cart: {
+    match: "cart", // used to match type, useful if we have multiple for same function
+    value: "cart ", // what the user typed
+    lang: "en", // maybe use to respond in another language
+    display: true,
+    handle: getCart
+  }
+};
+
+const allCommands = () =>
+  Object.keys(prefixes)
+    .filter(p => prefixes[p].display)
+    .join(", ");
+
+const getPrefix = text => {
+  const firstword = text.toLowerCase().split(" ")[0]; //
+  if (firstword in prefixes) {
+    return prefixes[firstword];
+  } else {
+    return null;
+  }
+};
 
 module.exports = {
   getPrefix,
