@@ -5,7 +5,7 @@
       "script": "index.js",
       "instances": 1,
       "watch": true,
-      "ignore_watch": ["data", "node_modules", ".git", "*.png"],
+      "ignore_watch": ["data", "node_modules", ".git", "*.png", "screenshots"],
       "watch_options": {
         "followSymlinks": false
       },
