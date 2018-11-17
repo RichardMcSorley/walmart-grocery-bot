@@ -75,7 +75,7 @@ const { login } = require("./login");
       "--disable-setuid-sandbox",
       `--remote-debugging-port=5000`
     ],
-    defaultViewport: { width: 1200, height: 1080 }
+    defaultViewport: { width: 1200, height: 800 }
   });
   logger("opened new browser");
   const page = await browserProcess.newPage();
