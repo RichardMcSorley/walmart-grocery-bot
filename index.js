@@ -15,6 +15,14 @@ require("./commands");
 require("./routes")(server); //setup routes
 
 const init = async () => {
+  server.state("sms", {
+    ttl: null,
+    isSecure: true,
+    isHttpOnly: true,
+    encoding: "base64json",
+    clearInvalid: false, // remove invalid cookies
+    strictHeader: true // don't allow violations of RFC 6265
+  });
   await server.start();
   await server.register(require("inert"));
   console.log(`Server running at: ${server.info.uri}`);

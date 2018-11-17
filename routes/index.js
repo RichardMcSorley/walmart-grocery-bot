@@ -19,16 +19,24 @@ module.exports = (server, options) => {
     }
   });
   server.route({
+    options: {
+      state: {
+        parse: true, // parse cookies and store in request.state
+        failAction: "log" // may also be 'ignore' or 'log'
+      }
+    },
     method: "POST",
     path: "/sms",
     handler: async (request, h) => {
+      const { lastMsg, lastPrefix } = request.state.sms;
+
       const twiml = new MessagingResponse();
       const { Body } = request.payload;
       const prefix = getPrefix(Body);
       logger("new sms received");
       if (prefix) {
         const prefixIndex = Body.indexOf(prefix.value);
-        const msg = Body.slice(prefixIndex + prefix.value.length); // slice of the prefix on the message
+        let msg = Body.slice(prefixIndex + prefix.value.length); // slice of the prefix on the message
         let args = msg.split(" "); // break the message into part by spaces
         const cmd = args[0].toLowerCase(); // set the first word as the command in lowercase just in case
         args.shift(); // delete the first word from the args
@@ -40,6 +48,9 @@ module.exports = (server, options) => {
           message.body(result.text);
           message.media(result.image);
         } else if (prefix.match === "add") {
+          if (msg == "" && lastMsg) {
+            msg = lastMsg;
+          }
           logger("sms is add");
           const { addToCart } = require("../commands");
           const result = await addToCart(msg);
@@ -59,6 +70,7 @@ module.exports = (server, options) => {
             "Sorry I dont understand, my commands are:\n" + allCommands()
           );
         }
+        h.state("sms", { lastMsg: msg, lastPrefix: prefix.value });
       } else {
         logger("could not find a command");
         twiml.message(
