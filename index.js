@@ -1,14 +1,22 @@
 require("dotenv").config();
 const Hapi = require("hapi");
+const Path = require("path");
 const server = Hapi.server({
   port: process.env.PORT,
-  host: "localhost"
+  host: "localhost",
+  routes: {
+    files: {
+      relativeTo: Path.join(__dirname, "screenshots")
+    }
+  }
 });
+
 require("./commands");
 require("./routes")(server); //setup routes
 
 const init = async () => {
   await server.start();
+  await server.register(require("inert"));
   console.log(`Server running at: ${server.info.uri}`);
 };
 

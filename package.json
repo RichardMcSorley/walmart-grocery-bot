@@ -11,6 +11,8 @@
   "dependencies": {
     "dotenv": "^6.1.0",
     "hapi": "^17.7.0",
+    "inert": "^5.1.2",
+    "moment": "^2.22.2",
     "puppeteer": "^1.10.0",
     "twilio": "^3.24.0"
   }

@@ -15,7 +15,22 @@ const dataAutoClick = async (page, s) => {
     console.log(`Could not find ${buildDataAtr(s)}`, e);
   }
 };
+let logger = () => {};
+if (process.env.OUTPUT_LOGS === "true") {
+  logger = console.log;
+}
+
+let screen = () => {};
+if (process.env.OUTPUT_SCREENSHOTS === "true") {
+  screen = async (page, filename) => {
+    await page.screenshot({
+      path: `./screenshots/${filename}.png`
+    });
+  };
+}
 
 module.exports = {
-  dataAutoClick
+  dataAutoClick,
+  logger,
+  screen
 };
