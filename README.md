@@ -10,8 +10,8 @@ Login to your Walmart.com/Grocery account, then waits for you to text !add or !s
 - puppeteer
 
 <p float="left">
-  <img src="../master/screenshots/app.jpg" width="100" />
-  <img src="../master/screenshots/text.jpg" width="100" />
+  <img src="../master/screenshots/app.jpg" width="500" />
+  <img src="../master/screenshots/text.jpg" width="500" />
 </p>
 
 ### Install
