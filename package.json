@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "prod:start": "pm2 start process.json --no-treekill --kill-timeout=60000"
   },
   "author": "",
   "license": "ISC",

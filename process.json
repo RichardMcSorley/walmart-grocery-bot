@@ -1,0 +1,17 @@
+{
+  "apps": [
+    {
+      "name": "Grocery SMS Bot",
+      "script": "index.js",
+      "instances": 1,
+      "watch": true,
+      "ignore_watch": ["data", "node_modules", ".git", "*.png"],
+      "watch_options": {
+        "followSymlinks": false
+      },
+      "env": {
+        "FORCE_INSPECTOR": 1
+      }
+    }
+  ]
+}
