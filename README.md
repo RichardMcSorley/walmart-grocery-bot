@@ -4,8 +4,8 @@ Bot will open a headless chrome browser and navigate walmart.com/grocery. It wil
 
 #### Available commands:
 
-- `!add` - Adds product first product in search to your cart.
-- `!search` - Returns first item's info from search.
+- `!add` - Adds first product in the search to your cart.
+- `!search` - Returns first item's info from the search.
 - `!cart` - returns a screenshot of your current cart.
 
 ### Technologies used:
