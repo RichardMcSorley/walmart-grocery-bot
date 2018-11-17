@@ -2,6 +2,7 @@ const appInfo = require("../package.json");
 const MessagingResponse = require("twilio").twiml.MessagingResponse;
 const { getPrefix, allCommands } = require("../commands");
 const { logger } = require("../utils");
+const filesDownloaded = [];
 const buildTwiml = (twiml, result) => {
   const message = twiml.message();
   message.body(result.text.replace(/&amp;/g, "&"));
@@ -19,6 +20,8 @@ module.exports = (server, options) => {
     method: "GET",
     path: "/{file*}",
     handler: async (req, h) => {
+      console.log("req for file");
+      filesDownloaded.push(req.params.file);
       return h.file(req.params.file);
     }
   });
@@ -32,7 +35,11 @@ module.exports = (server, options) => {
     method: "POST",
     path: "/sms",
     handler: async (request, h) => {
-      const { lastMsg, lastPrefix } = request.state.sms;
+      let lastMsg, lastPrefix;
+      if (request.state && request.state.sms) {
+        lastMsg = request.state.sms.lastMsg;
+        lastPrefix = request.state.sms.lastPrefix;
+      }
       const twiml = new MessagingResponse();
       const { Body } = request.payload;
       const prefix = getPrefix(Body);
@@ -51,6 +58,7 @@ module.exports = (server, options) => {
           logger("sms is add");
           let shouldShowImage = true;
           if (msg == "" && lastMsg) {
+            logger("using last message: " + lastMsg);
             msg = lastMsg;
             shouldShowImage = false;
           }
@@ -93,3 +101,5 @@ module.exports = (server, options) => {
     }
   });
 };
+
+module.exports.filesDownloaded = filesDownloaded;

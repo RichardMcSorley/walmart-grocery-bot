@@ -1,6 +1,6 @@
 const { logger, screen } = require("./utils");
 const moment = require("moment");
-const url = "https://grocery.walmart.com/search/?query=";
+const searchURL = "https://grocery.walmart.com/search/?query=";
 const $items = `[id^="item-"]`;
 const $addtocart = `[data-automation-id="addToCartBtn"]`;
 const $itemname = '[data-automation-id="name"]';
@@ -14,8 +14,14 @@ const searchProduct = async (
   shouldClick = false,
   shouldShowImage = true
 ) => {
-  await page.goto(url + query);
-  logger("navigating to search page");
+  const url = await page.url();
+  const searchQuery = searchURL + encodeURIComponent(query);
+  if (!url || url !== searchQuery) {
+    logger("navigating to search page");
+    await page.goto(searchQuery);
+  } else {
+    logger("Already on search page");
+  }
   await page.waitForSelector($items);
   logger("found items");
   const [first] = await page.$$($items);

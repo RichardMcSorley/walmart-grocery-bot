@@ -1,4 +1,6 @@
 require("dotenv").config();
+const fs = require("fs");
+const schedule = require("node-schedule");
 const Hapi = require("hapi");
 const Path = require("path");
 const server = Hapi.server({
@@ -47,3 +49,21 @@ process.on("SIGINT", () => {
   }, 6000);
 });
 init();
+
+const everyMin = () => {
+  // batch running every 1 mins
+  const rule = new schedule.RecurrenceRule();
+  rule.minute = new schedule.Range(0, 59, 1);
+  const files = require("./routes").filesDownloaded;
+  schedule.scheduleJob(rule, async () => {
+    console.info(`EVERY MIN: Clearing files ${files}`);
+    files.forEach(file => {
+      fs.unlink(`${Path.join(__dirname, "screenshots")}/${file}`, err => {
+        if (err) throw err;
+        files.shift();
+        console.log(file + " was deleted");
+      });
+    });
+  });
+};
+everyMin();

@@ -1,17 +1,13 @@
 let browserProcess = null;
+let page = null;
 const puppeteer = require("puppeteer");
-const { login } = require("./login");
+const { login, goToHomepage } = require("./login");
 const { logger } = require("./utils");
 const moment = require("moment");
-const homepageUrl = "https://grocery.walmart.com";
 const $cart = `[data-automation-id="cartSidebar"]`;
 
 const addToCart = async (query, shouldShowImage) => {
   const { searchProduct } = require("./search");
-  const page = await browserProcess.newPage();
-  logger("Opened a new page");
-  await page.goto(homepageUrl);
-  logger("Going to grocery homepage");
   await login(page);
   const { title, dollars, cents, image } = await searchProduct(
     page,
@@ -19,9 +15,6 @@ const addToCart = async (query, shouldShowImage) => {
     true,
     shouldShowImage
   );
-  logger("Logged in");
-  page.close();
-  logger("Close page");
   return {
     text: `Added ${title} to your cart. $${dollars}.${cents}`,
     image
@@ -30,15 +23,9 @@ const addToCart = async (query, shouldShowImage) => {
 
 const searchProduct = async query => {
   const { searchProduct } = require("./search");
-  const page = await browserProcess.newPage();
-  logger("opening new page");
-  await page.goto(homepageUrl);
-  logger("navigating to grocery homepage");
   await login(page);
   const { title, cents, dollars, image } = await searchProduct(page, query);
   logger("done searching");
-  page.close();
-  logger("closed page");
   return {
     text: `I found ${title}. $${dollars}.${cents}\nText !add and I'll add it to your cart.`,
     image
@@ -46,22 +33,16 @@ const searchProduct = async query => {
 };
 
 const getCart = async () => {
-  const page = await browserProcess.newPage();
-  logger("opening new page");
-  await page.goto(homepageUrl);
-  logger("navigating to grocery homepage");
   await login(page);
   await page.waitForSelector($cart);
   const cart = await page.$($cart);
-  const filename = moment().format("X");
+  const filename = `cart-${moment().format("X")}.png`;
   await cart.screenshot({
-    path: `./screenshots/${filename}.png`
+    path: `./screenshots/${filename}`
   });
-  page.close();
-  logger("closed page");
   return {
     text: `Here is your cart`,
-    image: process.env.SERVER_URL + filename + ".png"
+    image: process.env.SERVER_URL + filename
   };
 };
 
@@ -76,13 +57,9 @@ const getCart = async () => {
     defaultViewport: { width: 1200, height: 800 }
   });
   logger("opened new browser");
-  const page = await browserProcess.newPage();
+  page = await browserProcess.newPage();
   logger("opening new page");
-  await page.goto(homepageUrl);
-  logger("navigating to grocery homepage");
-  await login(page);
-  logger("logged in");
-  await page.close();
+  await goToHomepage(page);
 })();
 
 const prefixes = {
