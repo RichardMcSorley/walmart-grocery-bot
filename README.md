@@ -1,6 +1,6 @@
 # Walmart Grocery Cart Bot
 
-Bot will open a headless chrome browser and navigate walmart.com/grocery. It will login for you and add things to your cart by sending a message like `!add milk`. No more trying to remember everything, just add things to your cart as soon as you run out.
+Bot will open a headless chrome browser and navigate walmart.com/grocery. It will login for you and add things to your cart by sending a text message like `!add milk`. No more trying to remember everything, just add things to your cart as soon as you run out.
 
 #### Available commands:
 
