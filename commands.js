@@ -1,16 +1,19 @@
 let browserProcess = null;
-const { logger, screen } = require("./utils");
+const puppeteer = require("puppeteer");
+const { login } = require("./login");
+const { logger } = require("./utils");
 const moment = require("moment");
+const homepageUrl = "https://grocery.walmart.com";
+const $cart = `[data-automation-id="cartSidebar"]`;
 
 const addToCart = async (query, shouldShowImage) => {
-  logger("entered addToCart");
   const { searchProduct } = require("./search");
   const page = await browserProcess.newPage();
   logger("Opened a new page");
-  await page.goto("https://grocery.walmart.com");
+  await page.goto(homepageUrl);
   logger("Going to grocery homepage");
   await login(page);
-  const { title, wholeUnits, partialUnits, image } = await searchProduct(
+  const { title, dollars, cents, image } = await searchProduct(
     page,
     query,
     true,
@@ -20,7 +23,7 @@ const addToCart = async (query, shouldShowImage) => {
   page.close();
   logger("Close page");
   return {
-    text: `Added ${title} to your cart. $${wholeUnits}.${partialUnits}`,
+    text: `Added ${title} to your cart. $${dollars}.${cents}`,
     image
   };
 };
@@ -29,30 +32,27 @@ const searchProduct = async query => {
   const { searchProduct } = require("./search");
   const page = await browserProcess.newPage();
   logger("opening new page");
-  await page.goto("https://grocery.walmart.com");
+  await page.goto(homepageUrl);
   logger("navigating to grocery homepage");
   await login(page);
-  const { title, wholeUnits, partialUnits, image } = await searchProduct(
-    page,
-    query
-  );
+  const { title, cents, dollars, image } = await searchProduct(page, query);
   logger("done searching");
   page.close();
   logger("closed page");
   return {
-    text: `I found ${title}. $${wholeUnits}.${partialUnits}\nText !add to add to your cart.`,
+    text: `I found ${title}. $${dollars}.${cents}\nText !add and I'll add it to your cart.`,
     image
   };
 };
 
-const getCart = async query => {
+const getCart = async () => {
   const page = await browserProcess.newPage();
   logger("opening new page");
-  await page.goto("https://grocery.walmart.com");
+  await page.goto(homepageUrl);
   logger("navigating to grocery homepage");
   await login(page);
-  await page.waitForSelector(`[data-automation-id="cartSidebar"]`);
-  const cart = await page.$(`[data-automation-id="cartSidebar"]`);
+  await page.waitForSelector($cart);
+  const cart = await page.$($cart);
   const filename = moment().format("X");
   await cart.screenshot({
     path: `./screenshots/${filename}.png`
@@ -65,8 +65,6 @@ const getCart = async query => {
   };
 };
 
-const puppeteer = require("puppeteer");
-const { login } = require("./login");
 (async () => {
   browserProcess = await puppeteer.launch({
     userDataDir: "data",
@@ -80,7 +78,7 @@ const { login } = require("./login");
   logger("opened new browser");
   const page = await browserProcess.newPage();
   logger("opening new page");
-  await page.goto("https://grocery.walmart.com");
+  await page.goto(homepageUrl);
   logger("navigating to grocery homepage");
   await login(page);
   logger("logged in");

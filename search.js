@@ -1,47 +1,50 @@
 const { logger, screen } = require("./utils");
 const moment = require("moment");
+const url = "https://grocery.walmart.com/search/?query=";
+const $items = `[id^="item-"]`;
+const $addtocart = `[data-automation-id="addToCartBtn"]`;
+const $itemname = '[data-automation-id="name"]';
+const $itemimage = '[data-automation-id="image"]';
+const $itempricedollar = '[data-automation-id="wholeUnits"]';
+const $itempricecents = '[data-automation-id="partialUnits"]';
+
 const searchProduct = async (
   page,
   query,
   shouldClick = false,
   shouldShowImage = true
 ) => {
-  await page.goto("https://grocery.walmart.com/search/?query=" + query);
+  await page.goto(url + query);
   logger("navigating to search page");
-  await page.waitForSelector(`[id^="item-"]`);
+  await page.waitForSelector($items);
   logger("found items");
-  const [first] = await page.$$(`[id^="item-"]`);
+  const [first] = await page.$$($items);
   if (!first) {
     logger("cant find 1 item");
     return;
   }
-  // const text = await (await firstTitle.getProperty("aria-label")).jsonValue();
-  const button = await first.$(`[data-automation-id="addToCartBtn"]`);
-  const title = await first.$eval('[data-automation-id="name"]', element => {
-    return element.innerHTML;
-  });
+  const button = await first.$($addtocart);
+
+  // scrape item information
+  const title = await first.$eval($itemname, element => element.innerHTML);
   logger("found title");
   let image = null;
   if (shouldShowImage) {
-    image = await first.$eval('[data-automation-id="image"]', element => {
-      return element.src;
-    });
+    image = await first.$eval($itemimage, element => element.src);
     logger("found image");
   }
 
-  const wholeUnits = await first.$eval(
-    '[data-automation-id="wholeUnits"]',
-    element => {
-      return element.innerHTML;
-    }
+  const dollars = await first.$eval(
+    $itempricedollar,
+    element => element.innerHTML
   );
-  const partialUnits = await first.$eval(
-    '[data-automation-id="partialUnits"]',
-    element => {
-      return element.innerHTML;
-    }
+  const cents = await first.$eval(
+    $itempricecents,
+    element => element.innerHTML
   );
+
   logger("found price");
+  // click button
   if (shouldClick) {
     if (!button) {
       logger("cant click button, maybe you already added it to the cart");
@@ -53,9 +56,9 @@ const searchProduct = async (
   await screen(page, moment().format("X"));
   return {
     image,
-    partialUnits,
+    cents,
     title,
-    wholeUnits
+    dollars
   };
 };
 
