@@ -10,8 +10,13 @@ Login to your Walmart.com/Grocery account, then waits for you to text !add or !s
 - puppeteer
 
 <p float="left">
-  <img src="../master/screenshots/text.jpg"  style="max-width:50%;"/>
-  <img src="../master/screenshots/app.jpg" style="max-width:50%;" />
+<style>
+img{
+    max-width: 50%!important;
+}
+</style>
+  <img src="../master/screenshots/text.jpg"  style="max-width:50%!important;"/>
+  <img src="../master/screenshots/app.jpg" style="max-width:50%!important;" />
 </p>
 
 ### Install
