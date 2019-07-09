@@ -1,5 +1,10 @@
 # Walmart Grocery Cart Bot
 
+Use the Official google assistant app:
+
+- Just say: “OK Google, talk to Walmart.”
+https://techcrunch.com/2019/04/02/walmart-partners-with-google-on-voice-enabled-grocery-shopping/
+
 Bot will open a headless chrome browser and navigate walmart.com/grocery. It will login for you and add things to your cart by sending a text message like `!add milk`. No more trying to remember everything, just add things to your cart as soon as you run out.
 
 #### Available commands:
