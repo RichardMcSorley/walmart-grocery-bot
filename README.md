@@ -35,7 +35,7 @@ npm install
 
 - Setup a Twilio account with a researved phone number.
 - On your phone number's configure tab, update the webhook urls' Message comes in 'Webhook' http://YOURDOMAIN.COM/sms and Primary Handler Fails 'Webhook' to http://YOURDOMAIN.COM/fail
-- Rename .env.example to .evn
+- Rename .env.example to .env
 - Change values in .env to your username and password for your grocery account
 
 ### Run Locally
